@@ -1,0 +1,15 @@
+export const site = {
+  nombre: "D. Ferrán Diversus SL",
+  razonSocialCompleta: "D. Ferran Diversus, Sociedad Limitada",
+  cif: "B56432917",
+  sede: "Castellón de la Plana, Castellón, España",
+  direccion: "C/ Navarra 97, Castellón de la Plana, Castellón",
+  email: "info@dferrandiversus.es",
+  telefono: "682 308 777",
+  linkedin: "https://www.linkedin.com/company/d-ferran-diversus/",
+  dominio: "https://dferrandiversus.es",
+  fundacion: "2023",
+  registroMercantil: "Registro Mercantil de Castellón",
+  fechaConstitucion: "21 de septiembre de 2023",
+  escritura: "Escritura nº 1768/2023 ante el Notario D. Enrique Montoliu Alcón, Colegio Notarial de Valencia",
+};
