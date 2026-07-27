@@ -6,6 +6,8 @@ import { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform, useInView, animate } from "framer-motion";
 import { ArrowRight, ExternalLink, Search, BarChart2, TrendingUp, Lock } from "lucide-react";
 import SiteLayout from "@/components/layout/SiteLayout";
+import FadingVideo from "@/components/motion/FadingVideo";
+import BlurText from "@/components/motion/BlurText";
 import { useLang, t } from "@/lib/i18n";
 import { brands } from "@/data/brands";
 
@@ -232,44 +234,48 @@ export default function HomeClient() {
         className="relative min-h-screen flex items-center overflow-hidden"
         style={{ background: "var(--navy)" }}
       >
-        <div className="absolute inset-0 blueprint-grid pointer-events-none" />
+        <FadingVideo
+          src="https://stream.mux.com/Aa02T7oM1wH5Mk5EEVDYhbZ1ChcdhRsS2m1NYyx4Ua1g.m3u8"
+          className="absolute inset-0 w-full h-full object-cover z-0"
+        />
+        <div className="absolute inset-0 bg-black/45 pointer-events-none z-[1]" />
+        <div className="absolute inset-0 blueprint-grid pointer-events-none z-[1]" />
         <div
-          className="absolute inset-0 pointer-events-none"
+          className="absolute inset-0 pointer-events-none z-[1]"
           style={{
             background: "radial-gradient(ellipse 90% 80% at 50% 50%, transparent 20%, rgba(26,26,26,0.65) 100%)",
           }}
         />
         <div
-          className="absolute bottom-0 right-0 pointer-events-none"
+          className="absolute bottom-0 right-0 pointer-events-none z-[1]"
           style={{
             width: 550, height: 550,
-            background: "radial-gradient(circle, rgba(183,155,106,0.055) 0%, transparent 65%)",
+            background: "radial-gradient(circle, rgba(183,155,106,0.08) 0%, transparent 65%)",
             filter: "blur(70px)",
           }}
         />
 
-        <div className="relative wrap py-36 md:py-48 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center w-full">
+        <div className="relative z-10 wrap py-36 md:py-48 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center w-full">
           <div>
-            <motion.p
-              className="eyebrow mb-6"
+            <motion.div
+              className="liquid-glass inline-flex items-center rounded-full px-4 py-1.5 mb-6"
               initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.55 }}
             >
-              {t(copy.hero.eyebrow, lang)}
-            </motion.p>
+              <span className="eyebrow">{t(copy.hero.eyebrow, lang)}</span>
+            </motion.div>
 
             <h1 className="h1 text-white mb-7">
               {heroLines.map((line, i) => (
-                <motion.span
+                <BlurText
                   key={`${lang}-${i}`}
+                  text={line}
+                  as="span"
                   className="block"
-                  initial={{ opacity: 0, y: 24 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.08 + i * 0.12, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-                >
-                  {line}
-                </motion.span>
+                  startDelay={0.08 + i * 0.15}
+                  style={{ justifyContent: "flex-start" }}
+                />
               ))}
             </h1>
 
@@ -277,7 +283,7 @@ export default function HomeClient() {
               className="text-muted text-lg max-w-lg leading-relaxed mb-10"
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5, duration: 0.6 }}
+              transition={{ delay: 0.9, duration: 0.6 }}
             >
               {t(copy.hero.sub, lang)}
             </motion.p>
@@ -286,12 +292,15 @@ export default function HomeClient() {
               className="flex flex-wrap gap-4"
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.65, duration: 0.55 }}
+              transition={{ delay: 1.05, duration: 0.55 }}
             >
               <Link href="/marcas" className="btn-primary">
                 {t(copy.hero.cta1, lang)} <ArrowRight size={15} />
               </Link>
-              <Link href="/contacto" className="btn-outline-light">
+              <Link
+                href="/contacto"
+                className="liquid-glass inline-flex items-center gap-2 px-7 py-3.5 font-medium text-sm rounded-full text-white transition-transform duration-200 hover:-translate-y-0.5"
+              >
                 {t(copy.hero.cta2, lang)}
               </Link>
             </motion.div>
@@ -302,7 +311,7 @@ export default function HomeClient() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4, duration: 0.8 }}
-              className="pl-12 border-l border-white/6"
+              className="liquid-glass rounded-[1.25rem] p-8"
             >
               <p className="font-mono text-muted/50 text-[0.6rem] tracking-widest uppercase mb-8">
                 {lang === "es" ? "Marcas del grupo" : "Group brands"}
@@ -313,7 +322,7 @@ export default function HomeClient() {
         </div>
 
         <div
-          className="absolute bottom-0 inset-x-0 h-32 pointer-events-none"
+          className="absolute bottom-0 inset-x-0 h-32 pointer-events-none z-[1]"
           style={{ background: "linear-gradient(to bottom, transparent, var(--navy-deep))" }}
         />
       </section>
