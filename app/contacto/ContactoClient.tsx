@@ -6,9 +6,6 @@ import SiteLayout from "@/components/layout/SiteLayout";
 import { useLang, t } from "@/lib/i18n";
 import { site } from "@/data/site";
 
-// VERIFICAR: reemplazar con el ID real de tu formulario en formspree.io
-const FORMSPREE_ID = "xxxxxxxp";
-
 const copy = {
   hero: {
     eyebrow: { es: "Contacto corporativo", en: "Corporate contact" },
@@ -32,7 +29,6 @@ const copy = {
     sending:     { es: "Enviando...", en: "Sending..." },
     successTitle:{ es: "Mensaje enviado", en: "Message sent" },
     successBody: { es: "Gracias por contactar. Te responderemos en menos de 48 h.", en: "Thank you for reaching out. We will reply within 48 hours." },
-    errorTitle:  { es: "Error al enviar", en: "Send error" },
     errorBody:   { es: "Inténtalo de nuevo o escríbenos directamente a ", en: "Please try again or email us directly at " },
     required:    { es: "Campos obligatorios", en: "Required fields" },
   },
@@ -64,26 +60,25 @@ export default function ContactoPage() {
   useFadeUp(bodyRef as React.RefObject<Element>);
 
   const [status, setStatus] = useState<Status>("idle");
-  const [form, setForm] = useState({ name: "", email: "", company: "", subject: "", message: "" });
+  const [form, setForm] = useState({ nombre: "", email: "", empresa: "", asunto: "", mensaje: "" });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setStatus("sending");
     try {
-      const res = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+      const formData = new FormData(e.currentTarget);
+      formData.set("form-name", "contacto-corporativa");
+      const res = await fetch("/", {
         method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({ ...form, _subject: form.subject || "Contacto web — D. Ferrán Diversus" }),
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams(formData as unknown as Record<string, string>).toString(),
       });
-      if (res.ok) {
-        setStatus("success");
-        setForm({ name: "", email: "", company: "", subject: "", message: "" });
-      } else {
-        setStatus("error");
-      }
+      if (!res.ok) throw new Error("submit failed");
+      setStatus("success");
+      setForm({ nombre: "", email: "", empresa: "", asunto: "", mensaje: "" });
     } catch {
       setStatus("error");
     }
@@ -180,7 +175,7 @@ export default function ContactoPage() {
               <p className="eyebrow mb-3">{t(copy.info.legal, lang)}</p>
               <p className="text-ink-soft text-xs leading-relaxed">
                 {site.nombre}<br />
-                CIF: {site.cif} {/* VERIFICAR CIF */}<br />
+                CIF: {site.cif}<br />
                 {site.direccion}
               </p>
             </div>
@@ -196,13 +191,24 @@ export default function ContactoPage() {
                   <p className="text-ink-soft">{t(copy.form.successBody, lang)}</p>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+                <form
+                  name="contacto-corporativa"
+                  method="POST"
+                  data-netlify="true"
+                  data-netlify-honeypot="bot-field"
+                  onSubmit={handleSubmit}
+                  className="space-y-5"
+                  noValidate
+                >
+                  <input type="hidden" name="form-name" value="contacto-corporativa" />
+                  <p hidden><label>No rellenar: <input name="bot-field" /></label></p>
+
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div>
                       <label className="eyebrow block mb-1.5 text-ink">{t(copy.form.name, lang)} *</label>
                       <input
-                        type="text" name="name" required
-                        value={form.name} onChange={handleChange}
+                        type="text" name="nombre" required
+                        value={form.nombre} onChange={handleChange}
                         className={inputClass}
                         placeholder={lang === "es" ? "David Ferrán" : "John Smith"}
                       />
@@ -221,8 +227,8 @@ export default function ContactoPage() {
                     <div>
                       <label className="eyebrow block mb-1.5 text-ink">{t(copy.form.company, lang)}</label>
                       <input
-                        type="text" name="company"
-                        value={form.company} onChange={handleChange}
+                        type="text" name="empresa"
+                        value={form.empresa} onChange={handleChange}
                         className={inputClass}
                         placeholder={lang === "es" ? "Empresa SL" : "Company Ltd"}
                       />
@@ -230,8 +236,8 @@ export default function ContactoPage() {
                     <div>
                       <label className="eyebrow block mb-1.5 text-ink">{t(copy.form.subject, lang)} *</label>
                       <input
-                        type="text" name="subject" required
-                        value={form.subject} onChange={handleChange}
+                        type="text" name="asunto" required
+                        value={form.asunto} onChange={handleChange}
                         className={inputClass}
                         placeholder={lang === "es" ? "Colaboración / Consulta" : "Collaboration / Enquiry"}
                       />
@@ -240,8 +246,8 @@ export default function ContactoPage() {
                   <div>
                     <label className="eyebrow block mb-1.5 text-ink">{t(copy.form.message, lang)} *</label>
                     <textarea
-                      name="message" required rows={5}
-                      value={form.message} onChange={handleChange}
+                      name="mensaje" required rows={5}
+                      value={form.mensaje} onChange={handleChange}
                       className={`${inputClass} resize-none`}
                       placeholder={lang === "es" ? "Cuéntanos tu propuesta..." : "Tell us about your proposal..."}
                     />
