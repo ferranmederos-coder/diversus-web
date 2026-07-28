@@ -63,37 +63,14 @@ export default function FadingVideo({
     video.addEventListener("loadeddata", onLoadedData);
     video.addEventListener("timeupdate", onTimeUpdate);
     video.addEventListener("ended", onEnded);
-
-    let hls: import("hls.js").default | null = null;
-    let cancelled = false;
-
-    if (src.endsWith(".m3u8")) {
-      // Prefer hls.js (MediaSource) wherever it's actually supported — this is
-      // more reliable than trusting canPlayType, which some engines report
-      // truthy for without being able to decode HLS at all. Fall back to
-      // native playback (real Safari) only when MSE isn't available.
-      import("hls.js").then(({ default: Hls }) => {
-        if (cancelled) return;
-        if (Hls.isSupported()) {
-          hls = new Hls();
-          hls.loadSource(src);
-          hls.attachMedia(video);
-        } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
-          video.src = src;
-        }
-      });
-    } else {
-      video.src = src;
-    }
+    video.src = src;
 
     return () => {
-      cancelled = true;
       if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
       if (endedTimeout) clearTimeout(endedTimeout);
       video.removeEventListener("loadeddata", onLoadedData);
       video.removeEventListener("timeupdate", onTimeUpdate);
       video.removeEventListener("ended", onEnded);
-      hls?.destroy();
     };
   }, [src]);
 

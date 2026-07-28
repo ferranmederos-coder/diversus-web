@@ -235,7 +235,7 @@ export default function HomeClient() {
         style={{ background: "var(--navy)" }}
       >
         <FadingVideo
-          src="https://stream.mux.com/Aa02T7oM1wH5Mk5EEVDYhbZ1ChcdhRsS2m1NYyx4Ua1g.m3u8"
+          src="/videos/hero-mediterranean.mp4"
           className="absolute inset-0 w-full h-full object-cover z-0"
         />
         <div className="absolute inset-0 bg-black/45 pointer-events-none z-[1]" />
